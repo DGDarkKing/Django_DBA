@@ -1,0 +1,34 @@
+
+{% spaceless %}
+<div>
+<div style="display:inline-block; margin:10px">
+    <h2><a href="
+        {% if context_data != 'structure' %}
+        {% url 'table_detail' table_name %}
+        {% endif %}
+        ">
+          Structure
+    </a></h2>
+</div>
+
+<div style="display:inline-block; margin:10px">
+    <h2><a href="
+        {% if context_data != 'keys' %}
+        {% url 'table_detail' table_name %}
+        {% endif %}
+        ">
+            Keys
+    </a></h2>
+</div>
+
+<div style="display:inline-block; margin:10px">
+    <h2><a href="
+        {% if context_data != 'keys' %}
+        {% url 'table_detail' table_name %}
+        {% endif %}
+        ">
+        Data
+    </a></h2>
+</div>
+</div>
+{% endspaceless %}

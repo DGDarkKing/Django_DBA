@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+
+{% block title %}Structure of table "{{ table_name }}"{% endblock %}
+
+
+{% block content %}
+    {% include 'home_sidebar.html' %}
+    {% include 'table_data/sidebar.html' %}
+
+    Fields {{ fields|length }}
+    <a href="{% url 'add_field_form' table_name %}">Add</a>
+    <br>
+    {% for field_data in fields %}
+        {{ field_data.column_name }} {{ field_data.data_type }}
+        <a href="{% url 'change_field_form' table_name field_data.column_name %}">Change</a>
+        <a href="{% url 'delete_field' table_name %}">Delete</a>
+        <br>
+    {% endfor %}
+
+{% endblock %}
