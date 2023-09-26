@@ -1,6 +1,6 @@
 from django.urls import path
 
-from ui_operations.views import get_tables, add_table, delete_table
+from tables_app.views import get_tables, add_table, delete_table
 
 urlpatterns = [
     path("", get_tables, name='home'),

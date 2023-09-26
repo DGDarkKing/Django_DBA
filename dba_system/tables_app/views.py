@@ -2,8 +2,8 @@ from django import shortcuts as short
 from django.core.handlers.wsgi import WSGIRequest
 from django.views.decorators import http as http_decor
 
-from ui_operations.forms import CreateTableForm
-from ui_operations.models import Tables
+from tables_app.forms import CreateTableForm
+from tables_app.models import Tables
 
 
 # Create your views here.
