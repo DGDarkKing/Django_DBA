@@ -14,7 +14,7 @@
 <div style="display:inline-block; margin:10px">
     <h2><a href="
         {% if context_data != 'keys' %}
-        {% url 'table_detail' table_name %}
+        {% url 'keys' table_name %}
         {% endif %}
         ">
             Keys
@@ -23,8 +23,8 @@
 
 <div style="display:inline-block; margin:10px">
     <h2><a href="
-        {% if context_data != 'keys' %}
-        {% url 'table_detail' table_name %}
+        {% if context_data != 'data_work' %}
+        {% url 'select_data' table_name %}
         {% endif %}
         ">
         Data

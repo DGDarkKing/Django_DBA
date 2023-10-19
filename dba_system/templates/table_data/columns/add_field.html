@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+
+{% block title %}Create field{% endblock %}
+
+
+{% block content %}
+
+    <form  action="{% url 'add_field' table_name %}"
+           method="post">
+
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" name="create_button" value="Add">
+        <a href="{% url 'table_detail' table_name %}">
+            <input type="button" name="cancel_button" value="Cancel">
+        </a>
+    </form>
+
+{% endblock %}

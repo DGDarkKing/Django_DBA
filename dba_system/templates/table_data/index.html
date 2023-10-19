@@ -9,13 +9,51 @@
     {% include 'table_data/sidebar.html' %}
 
     Fields {{ fields|length }}
-    <a href="{% url 'add_field_form' table_name %}">Add</a>
+    <a href="{% url 'add_field' table_name %}">Add</a>
     <br>
-    {% for field_data in fields %}
-        {{ field_data.column_name }} {{ field_data.data_type }}
-        <a href="{% url 'change_field_form' table_name field_data.column_name %}">Change</a>
-        <a href="{% url 'delete_field' table_name %}">Delete</a>
-        <br>
-    {% endfor %}
+    <table cellspacing="20px">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Type</th>
+                <th>NOT NULL</th>
+                <th>Default</th>
+                <th colspan="2">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for field_data in fields %}
+                <tr>
+                    <td> {{ field_data.column_name }} </td>
+                    <td>
+                        {{ field_data.data_type }}
+                        {% if field_data.character_maximum_length %}
+                            ({{ field_data.character_maximum_length }})
+                        {% elif field_data.numeric_precision_radix and field_data.numeric_precision_radix != 2 %}
+                            ({{ field_data.numeric_precision }}, {{ field_data.numeric_scale }})
+                        {% endif %}
+                    </td>
+                    <td>
+                        <input type="checkbox"
+                               {% if field_data.is_nullable == "NO" %}
+                                    checked
+                               {% endif %}
+                               disabled>
+                    </td>
+                    <td> {{ field_data.column_default }} </td>
 
+                    <td>
+                        <a href="{% url 'change_field' table_name field_data.column_name %}">
+                            Change
+                        </a>
+                    </td>
+                    <td>
+                        <a href="{% url 'delete_field' table_name field_data.column_name %}">
+                            Delete
+                        </a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 {% endblock %}

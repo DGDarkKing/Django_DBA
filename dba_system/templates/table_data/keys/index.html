@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+
+{% block title %}Indexes of table "{{ table_name }}"{% endblock %}
+
+
+{% block content %}
+    {% include 'home_sidebar.html' %}
+    {% include 'table_data/sidebar.html' %}
+
+    <h3>Primary key</h3>
+    <a href="{% url 'add_pk' table_name %}">
+        Add
+    </a>
+    <table cellspacing="20px">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Columns</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for primary_key in pk %}
+            <tr>
+                <td>
+                    {{ primary_key.name }}
+                </td>
+                <td>
+                    {{ primary_key.columns|join:", " }}
+                </td>
+                <td>
+                    <a href="{% url 'delete_pk' table_name primary_key.name %}">
+                        Delete
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <br>
+    Indexes
+    <a href="{% url 'add_index' table_name %}">
+        Add
+    </a>
+    <table cellspacing="20px">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Columns</th>
+                <th>Unique</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for index in indexes %}
+            <tr>
+                <td>
+                    {{ index.name }}
+                </td>
+                <td>
+                    {{ index.columns|join:", " }}
+                </td>
+                <td>
+                    <input type="checkbox" disabled
+                           {% if index.is_unique %}
+                                checked
+                           {% endif %}
+                    >
+                </td>
+                <td>
+                    <a href="{% url 'delete_index' table_name index.name %}">
+                        Delete
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}

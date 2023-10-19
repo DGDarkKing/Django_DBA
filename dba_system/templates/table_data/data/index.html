@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+
+
+{% block title %}Data of table "{{ table_name }}"{% endblock %}
+
+
+{% block content %}
+    {% include 'home_sidebar.html' %}
+    {% include 'table_data/sidebar.html' %}
+
+    <a href="{% url 'add_pk' table_name %}">
+        Add
+    </a>
+    <table cellspacing="20px">
+        <thead>
+            <tr>
+                {% for column_name in columns %}
+                <th>
+                    {{ column_name }}
+                </th>
+                {% endfor %}
+                {% if table_has_pk %}
+                <th colspan="2">
+                    Actions
+                </th>
+                {% endif %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in data %}
+            <tr>
+                {% for value in row %}
+                <td class="row-data">
+                    {{ value }}
+                </td>
+                {% endfor %}
+
+            {% if pk %}
+                <td>
+                    <button class="change_btn">Change</button>
+                </td>
+                <td>
+                    <button class="delete_btn">Delete</button>
+                </td>
+            {% endif %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {% if pk %}
+    <form id="the_form">
+        {% csrf_token  %}
+    </form>
+
+    <script>
+      get_dict = function(elem){
+        var row = (elem).closest("tr");
+        var data = Array.from(row.querySelectorAll(".row-data")).map(x => x.innerHTML.trim());
+
+        pk_indexes = [
+            {{ pk|join:", " }}
+        ];
+        column_names = [
+            {% for col_name in pk_cols %}
+                "{{ col_name }}",
+            {% endfor %}
+        ];
+
+        var res = {};
+        for(i=0; i < pk_indexes.length; i++){
+            res[column_names[i]] = data[pk_indexes[i]]
+        }
+
+
+        return res;
+      }
+
+      send = function(data){
+        while (form.firstChild) {
+            if (form.firstChild.name != 'csrfmiddlewaretoken')
+                form.removeChild(form.firstChild);
+            else if (form.children.length == 1)
+                break;
+        }
+
+        for (const [key, value] of Object.entries(data)){
+          const hiddenField = document.createElement('input');
+          hiddenField.type = 'hidden';
+          hiddenField.name = key;
+          hiddenField.value = value;
+          form.appendChild(hiddenField);
+        }
+
+        form.submit()
+      }
+
+      form = document.getElementById("the_form")
+      change_btn = function(){
+        data = get_dict(this)
+        form.method = "post"
+        form.action = "{% url 'update_data' table_name %}"
+        send(data);
+      };
+      document.querySelectorAll(".change_btn").forEach(x => x.onclick = change_btn)
+
+      delete_btn = function(){
+        data = get_dict(this)
+        form.method = "post"
+        form.action = "{% url 'delete_data' table_name %}"
+        send(data);
+      };
+
+      document.querySelectorAll(".delete_btn").forEach(x => x.onclick = delete_btn)
+    </script>
+    {% endif %}
+
+{% endblock %}
