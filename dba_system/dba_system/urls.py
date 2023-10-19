@@ -17,11 +17,8 @@ Including another URLconf
 from django.http import HttpResponse
 from django.urls import path, include
 
-def d(request):
-    return HttpResponse('Блять работай')
 
 urlpatterns = [
-    path('syka/', d),
     path("", include("tables_app.urls")),
     path("table_work/", include("base_operations.urls")),
     path("advanced/", include("advanced_operations.urls")),
