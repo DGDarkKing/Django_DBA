@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+
+
+{% block title %}Update data of table "{{ table_name }}"{% endblock %}
+
+
+{% block content %}
+    {% include 'home_sidebar.html' %}
+
+    <table cellspacing="20px">
+        <thead>
+            <tr>
+                {% for column_name in columns %}
+                <th>
+                    {{ column_name }}
+                </th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            <tr class="source-data">
+                {% for value in data %}
+                <td>
+                    {% if value is not None %}
+                        <input type="text" value="{{ value }}">
+                    {% else %}
+                        <input type="text" value="">
+                    {% endif %}
+
+                </td>
+                {% endfor %}
+            </tr>
+        </tbody>
+    </table>
+
+    <button class="save_btn">Save</button>
+    <a href="{% url 'select_data' table_name %}">
+    <button>Cancel</button>
+    </a>
+
+    <form id="the_form">
+        {% csrf_token  %}
+    </form>
+
+    <script>
+      get_dict = function(){
+        var data = [
+            {% for value in data %}
+                "{{ value }}",
+            {% endfor %}
+        ];
+
+        pk_indexes = [
+            {{ pk|join:", " }}
+        ];
+        column_names = [
+            {% for col_name in pk_cols %}
+                "{{ col_name }}",
+            {% endfor %}
+        ];
+
+        var res = {};
+        for(i=0; i < pk_indexes.length; i++){
+            res[column_names[i]] = data[pk_indexes[i]]
+        }
+
+        return res;
+      }
+
+      send = function(data){
+        while (form.firstChild) {
+            if (form.firstChild.name != 'csrfmiddlewaretoken')
+                form.removeChild(form.firstChild);
+            else if (form.children.length == 1)
+                break;
+        }
+
+          const hiddenField = document.createElement('input');
+          hiddenField.type = 'hidden';
+          hiddenField.name = 'data';
+          hiddenField.value = JSON.stringify(data);
+          form.appendChild(hiddenField);
+
+        form.submit();
+      }
+
+      updatable_row = document.getElementsByClassName("source-data")[0];
+      form = document.getElementById("the_form");
+
+      save_btn = function(){
+        pk = get_dict(this);
+        form.method = "post";
+        form.action = "{% url 'update' table_name %}";
+
+        data = Array.from(updatable_row.cells).map(x => x.querySelector("input").value);
+        columns = [
+        {% for col_name in columns %}
+                "{{ col_name }}",
+            {% endfor %}
+        ];
+        res_data = {};
+        for(i=0; i < columns.length; i++){
+            res_data[columns[i]] = data[i]
+        }
+
+        data = {
+            pk: pk,
+            data: res_data
+        }
+
+        send(data)
+      };
+      document.querySelectorAll(".save_btn").forEach(x => x.onclick = save_btn);
+
+    </script>
+
+{% endblock %}

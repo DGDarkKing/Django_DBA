@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+
+{% block title %}Insert data to table "{{ table_name }}"{% endblock %}
+
+
+{% block content %}
+    {% include 'home_sidebar.html' %}
+
+    <button id="add_row_button">Add row</button>
+    <table cellspacing="20px" id="table">
+        <thead>
+            <tr>
+                {% for column_name in columns %}
+                <th>
+                    {{ column_name }}
+                </th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                {% for value in columns %}
+                <td>
+                    <input type="text" value="">
+                </td>
+                {% endfor %}
+            </tr>
+        </tbody>
+    </table>
+
+    <button id="save_btn">Save</button>
+    <a href="{% url 'select_data' table_name %}">
+    <button>Cancel</button>
+    </a>
+
+    <form id="targetForm" action="{% url 'insert' table_name %}" method="post">
+        {% csrf_token  %}
+    </form>
+
+    <script>
+
+      tableBody = document.getElementById('table').getElementsByTagName('tbody')[0];
+      add_row = function(){
+        number_cells = {{ columns|length }};
+        var newRow = tableBody.insertRow();
+        for(i=0; i < number_cells; i++){
+            var newCell = newRow.insertCell();
+            var input = document.createElement("input");
+            input.type = 'text';
+            newCell.appendChild(input);
+        }
+      }
+
+      document.getElementById('add_row_button').onclick = add_row;
+
+      inputData = document.getElementById('data');
+      targetForm = document.getElementById('targetForm');
+      save = function(){
+        data = [];
+        for (let row of tableBody.rows) {
+            row_data = Array.from(row.cells).map(x => x.querySelector("input").value);
+            data.push(row_data);
+        }
+
+        columns =[
+           {% for col in columns %}
+            "{{ col }}",
+           {% endfor %}
+        ];
+
+        data = {
+            'data': data,
+            'cols': columns,
+        };
+
+        const hiddenField = document.createElement('input');
+        hiddenField.type = 'hidden';
+        hiddenField.name = 'data';
+        hiddenField.value = JSON.stringify(data);
+        targetForm.appendChild(hiddenField);
+        targetForm.submit()
+      }
+
+      document.getElementById('save_btn').onclick = save;
+
+
+    </script>
+
+{% endblock %}

@@ -22,8 +22,10 @@ keys_urls = [
 
 data_work_urls = [
     path('', data_work.select, name='select_data'),
-    path('insert/', data_work.insert, name='insert_data'),
-    path('update/', data_work.select_to_update, name='update_data'),
+    path('insert_data/', data_work.get_insert_page, name='insert_data'),
+    path('insert/', data_work.insert, name='insert'),
+    path('update_data/', data_work.select_to_update, name='update_data'),
+    path('update/', data_work.update, name='update'),
     path('delete/', data_work.delete, name='delete_data'),
 
 ]
