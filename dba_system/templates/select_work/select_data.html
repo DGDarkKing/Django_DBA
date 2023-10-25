@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+
+
+{% block title %}Complex select: Select data{% endblock %}
+
+
+{% block content %}
+    {% include 'home_sidebar.html' %}
+
+    <datalist id="aggregation_functions">
+        {% for agg_func_name in aggregation_funcs %}
+        <option>{{ agg_func_name }}</option>
+        {% endfor %}
+    </datalist>
+
+    <datalist id="conditions">
+        <option value="{} = ">=</option>
+        <option value="{} <> ">&lt;&gt;</option>
+        <option value="{} > ">&gt;</option>
+        <option value="{} < ">&lt;</option>
+        <option value="{} >= ">&gt;=</option>
+        <option value="{} <= ">&lt;=</option>
+        <option value="{} IS NULL ">IS NULL</option>
+        <option value="{} IS NOT NULL ">IS NOT NULL</option>
+        <option value="{} IN ( )">IN</option>
+    </datalist>
+
+    {% for table_name, columns in tables.items %}
+        <h2>{{ table_name }}</h2>
+        <table id="{{ table_name }}">
+            <thead>
+                <tr>
+                    <th id="columnName">Column</th>
+                    <th id="isSelect">Select</th>
+                    <th id="aggregationFunc">Aggregation function</th>
+                    <th id="condition">Condition</th>
+                    <th id="expressionSelect">Expression of select</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for column in columns %}
+                <tr>
+                    <td>{{ column }}</td>
+                    <td><input type="checkbox"></td>
+                    <td><input type="text" list="aggregation_functions" placeholder="Select from options"/></td>
+                    <td><input type="text" list="conditions" placeholder="Select from options OR enter your variant but dont forget set {}"/></td>
+                    <td><input type="text" placeholder="Input your variant for data output but set {}"/></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endfor %}
+
+    <button type="submit" id="next_btn">Next</button>
+    <form id="target_form" action="{% url 'query' %}" method="post">
+        {% csrf_token %}
+    </form>
+
+
+    <script>
+        getDataFromTables = function(tables){
+            data = [];
+            for(i=0; i < tables.length; i++){
+                currentTable = tables[i]
+                tableData = {
+                    tableName: currentTable.id,
+                }
+
+                rowsData = [];
+                headers = currentTable.getElementsByTagName('th');
+                rows = currentTable.rows;
+                for(j=1; j < rows.length; j++){
+                    curRow = rows[j];
+                    rowData = {};
+                    for(k=0; k < curRow.cells.length; k++){
+                        header = headers[k].id
+                        curCell = curRow.cells[k];
+                        if(curCell.children.length == 0){
+                            rowData[header] = curCell.innerHTML;
+                        }
+                        else{
+                            value = true;
+                            if(curCell.children[0].type == 'text')
+                                value = curCell.children[0].value;
+                            else
+                                value = curCell.children[0].checked;
+                            rowData[header] = value;
+                        }
+                    }
+
+                    rowsData.push(rowData);
+
+                }
+
+                tableData['rows'] = rowsData
+                data.push(tableData)
+            }
+
+            return data;
+        }
+
+        targetForm = document.getElementById('target_form');
+        document.getElementById('next_btn').onclick = function(){
+            tables = document.getElementsByTagName('table');
+            data = getDataFromTables(tables);
+
+            const hiddenField = document.createElement('input');
+            hiddenField.type = 'hidden';
+            hiddenField.name = 'data';
+            hiddenField.value = JSON.stringify(data);
+            targetForm.appendChild(hiddenField);
+            targetForm.submit();
+        }
+    </script>
+
+{% endblock %}

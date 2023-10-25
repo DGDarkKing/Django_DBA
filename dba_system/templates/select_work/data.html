@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+
+{% block title %}Data of query{% endblock %}
+
+
+{% block content %}
+    {% include 'home_sidebar.html' %}
+
+    <table cellspacing="20px">
+        <thead>
+            <tr>
+                {% for column_name in columns %}
+                <th>
+                    {{ column_name }}
+                </th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in data %}
+            <tr>
+                {% for value in row %}
+                <td class="row-data">
+                    {{ value }}
+                </td>
+                {% endfor %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+
+
+
+    <form id="the_form" method="post" action="{% url 'repeat_query' %}">
+        {% csrf_token  %}
+    </form>
+    <textarea id="textArea" name="Text1" cols="40" rows="5">{{ query }}</textarea>
+    <button id="update_btn">Update</button>
+
+    <script>
+        targetForm = document.getElementById('the_form')
+        queryTextArea = document.getElementById('textArea')
+
+        document.getElementById('update_btn').onclick = function(){
+            const hiddenField = document.createElement('input');
+            hiddenField.type = 'hidden';
+            hiddenField.name = 'query';
+            hiddenField.value = queryTextArea.value;
+            targetForm.appendChild(hiddenField);
+            targetForm.submit()
+        }
+    </script>
+
+{% endblock %}
