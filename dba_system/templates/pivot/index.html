@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+
+{% block title %}Pivot table: Enter data{% endblock %}
+
+
+{% block content %}
+    {% include 'home_sidebar.html' %}
+
+    <datalist id="func_list">
+        <option>SUM</option>
+        <option>AVG</option>
+        <option>COUNT</option>
+    </datalist>
+
+
+    <form id="target_form" method="post" action="{% url 'pivot_query' %}">
+        {% csrf_token %}
+        Query<br>
+        <textarea id="query" name="query" placeholder="Enter your target query" cols="40" rows="5" required></textarea><br>
+        <label for="column_x">Column X:</label>
+        <input type="text" id="column_x" name="x" required>
+        <label for="sort_x">Sort X:</label>
+        <input type="checkbox" id="sort_x" name="sort_x">
+        <br>
+        <label for="column_y">Column Y:</label>
+        <input type="text" id="column_y" name="y" required>
+        <label for="sort_y">Sort Y:</label>
+        <input type="checkbox" id="sort_y" name="sort_y">
+        <br>
+        <label for="func">Aggregation function</label>
+        <input type="text" list="func_list" id="func" name="func" required><br>
+        <label for="target_field">Aggregation field</label>
+        <input type="text" id="target_field" name="target_field" required><br>
+
+        <input type="submit">
+    </form>
+
+
+
+{% endblock %}

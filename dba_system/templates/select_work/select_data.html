@@ -23,6 +23,13 @@
         <option value="{} IS NULL ">IS NULL</option>
         <option value="{} IS NOT NULL ">IS NOT NULL</option>
         <option value="{} IN ( )">IN</option>
+        <option value="{} LIKE ( )">LIKE</option>
+    </datalist>
+
+    <datalist id="select_expression">
+        <option>AS</option>
+        <option>CASE WHEN</option>
+        <option>COALESCE()</option>
     </datalist>
 
     {% for table_name, columns in tables.items %}
@@ -45,7 +52,7 @@
                     <td><input type="checkbox"></td>
                     <td><input type="text" list="aggregation_functions" placeholder="Select from options"/></td>
                     <td><input type="text" list="conditions" placeholder="Select from options OR enter your variant but dont forget set {}"/></td>
-                    <td><input type="text" placeholder="Input your variant for data output but set {}"/></td>
+                    <td><input type="text" list="select_expression" placeholder="Input your variant for data output but set {}"/></td>
                 </tr>
                 {% endfor %}
             </tbody>

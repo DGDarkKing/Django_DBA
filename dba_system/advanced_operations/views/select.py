@@ -114,7 +114,6 @@ def create_query(request: HttpRequest):
         }
     )
 
-
 @http_decor.require_POST
 def repeat_query(request: HttpRequest):
     query = request.POST['query']
@@ -126,7 +125,7 @@ def repeat_query(request: HttpRequest):
 
     return short.render(
         request,
-        'select_work/data.html',
+        'data.html',
         context={
             'query': query,
             'columns': columns,
